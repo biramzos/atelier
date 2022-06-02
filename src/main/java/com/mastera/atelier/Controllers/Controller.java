@@ -34,7 +34,9 @@ public class Controller {
             model.addAttribute("user", currentUser);
             model.addAttribute("masters", userService.getMasterUsers());
         }
-        model.addAttribute("masters", userService.getMasterUsers());
+        else {
+            model.addAttribute("masters", userService.getMasterUsers());
+        }
         return "index";
     }
 
