@@ -113,7 +113,7 @@ public class Controller {
                     res.addCookie(cookie);
                 }
             }
-            return "redirect:/";
+            return "redirect:/home";
         }
     }
 
