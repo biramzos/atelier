@@ -5,6 +5,7 @@ import com.mastera.atelier.Services.OrderService;
 import com.mastera.atelier.Services.UserService;
 import com.mastera.atelier.Token.Token;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +29,7 @@ public class Controller {
 
     @GetMapping("/")
     public String home(HttpServletResponse res, HttpServletRequest req, Model model){
-        Cookie[] cookies = req.getCookies();
-        int count = cookies.length;
-        if(count == 0){
+        if(req.getCookies() == null){
             Cookie cookie = new Cookie("SESSION","");
             res.addCookie(cookie);
         }
@@ -118,9 +117,10 @@ public class Controller {
         Token currentUserToken = new Token();
         String currentUser = "";
         for(Cookie cookie:cookies){
-            if(cookie.getName().equals("SESSION")){
-                if(!cookie.getValue().equals(""))
+            if(cookie.getName().equals("SESSION")) {
+                if (!cookie.getValue().isEmpty()) {
                     currentUser = currentUserToken.usernameByToken(cookie.getValue());
+                }
             }
         }
         return currentUser;
