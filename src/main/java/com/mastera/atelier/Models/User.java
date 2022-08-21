@@ -40,4 +40,5 @@ public class User {
         this.image = image;
         this.role = role;
     }
+
 }

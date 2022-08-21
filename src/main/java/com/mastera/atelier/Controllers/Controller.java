@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+
 
 @org.springframework.stereotype.Controller
 public class Controller {
@@ -28,7 +27,18 @@ public class Controller {
     private OrderService orderService;
 
     @GetMapping("/")
-    public String home(HttpServletRequest req, Model model){
+    public String home(HttpServletResponse res, HttpServletRequest req, Model model){
+        Cookie[] cookies = req.getCookies();
+        int count = 0;
+        for(Cookie cookie:cookies){
+            if(cookie.getName().equals("SESSION")){
+                count++;
+            }
+        }
+        if(count == 0){
+            Cookie cookie = new Cookie("SESSION","");
+            res.addCookie(cookie);
+        }
         User currentUser = userService.getUserByUsername(getCurrentUser(req));
         if(currentUser != null){
             model.addAttribute("user", currentUser);
@@ -88,27 +98,33 @@ public class Controller {
     }
 
     @PostMapping("/signin")
-    public String login_post(RedirectAttributes redir, HttpServletResponse res, @RequestParam("username") String username, @RequestParam("password") String password){
+    public String login_post(RedirectAttributes redir, HttpServletRequest req, HttpServletResponse res, @RequestParam("username") String username, @RequestParam("password") String password){
         User user = userService.login(username,password);
         if(user == null){
-            Cookie cookieError = new Cookie("SESSION","");
-            res.addCookie(cookieError);
             redir.addFlashAttribute("error", "Ошибка с авторизацией!");
-            return "login";
+            return "redirect:/signin";
         }
-        Token token = new Token();
-        Cookie cookie = new Cookie("SESSION", token.tokenByUsername(username));
-        res.addCookie(cookie);
-        return "redirect:/";
+        else {
+            Token token = new Token();
+            Cookie[] cookies = req.getCookies();
+            for(Cookie cookie:cookies){
+                if(cookie.getName().equals("SESSION")){
+                    System.out.println(token.tokenByUsername(username));
+                    cookie.setValue(token.tokenByUsername(username));
+                    res.addCookie(cookie);
+                }
+            }
+            return "redirect:/";
+        }
     }
 
     public String getCurrentUser(HttpServletRequest req){
         Cookie[] cookies = req.getCookies();
         Token currentUserToken = new Token();
-        String currentUser = null;
+        String currentUser = "";
         for(Cookie cookie:cookies){
             if(cookie.getName().equals("SESSION")){
-                if(!cookie.getValue().isEmpty())
+                if(!cookie.getValue().equals(""))
                     currentUser = currentUserToken.usernameByToken(cookie.getValue());
             }
         }
