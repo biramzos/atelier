@@ -28,11 +28,16 @@ public class Controller {
     private OrderService orderService;
 
     @GetMapping("/")
-    public String home(HttpServletResponse res, HttpServletRequest req, Model model){
+    public String redirect(HttpServletResponse res, HttpServletRequest req){
         if(req.getCookies() == null){
             Cookie cookie = new Cookie("SESSION","");
             res.addCookie(cookie);
         }
+        return "redirect:/home";
+    }
+
+    @GetMapping("/home")
+    public String home(HttpServletResponse res, HttpServletRequest req, Model model){
         User currentUser = userService.getUserByUsername(getCurrentUser(req));
         if(currentUser != null){
             model.addAttribute("user", currentUser);
