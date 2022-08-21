@@ -29,12 +29,7 @@ public class Controller {
     @GetMapping("/")
     public String home(HttpServletResponse res, HttpServletRequest req, Model model){
         Cookie[] cookies = req.getCookies();
-        int count = 0;
-        for(Cookie cookie:cookies){
-            if(cookie.getName().equals("SESSION")){
-                count++;
-            }
-        }
+        int count = cookies.length;
         if(count == 0){
             Cookie cookie = new Cookie("SESSION","");
             res.addCookie(cookie);
