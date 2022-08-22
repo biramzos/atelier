@@ -41,7 +41,7 @@
             <table>
                 <tr th:each="master:${masters}">
                     <td>
-                        <img th:src="@{'/images/' + ${master.getUsername()}}" height="200px" style="border-radius: 50%; margin:5px 5px 5px 5px"/><br>
+                        <img th:src="@{'/images/' + ${master.getUsername()}}" height="200px" style="border-radius: 50%; margin:5px 5px 5px 5px"/><br><br>
                     </td>
                     <td>&ensp;</td>
                     <td>
@@ -51,7 +51,7 @@
                     </td>
                 </tr>
             </table>
-            <br>
+            <br><br>
         </center>
     </div><br>
     <div th:insert="fragments.html::footer"/>
