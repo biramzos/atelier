@@ -23,6 +23,7 @@ public class ApiController {
 
     Token generator = new Token();
 
+    @CrossOrigin
     @PostMapping(value = "/login",produces = "application/json")
     public Map<String,String> getCurrentUser(@RequestBody UserRequest request){
         User user = userService.getUserByUsername(request.getUsername());
@@ -47,11 +48,13 @@ public class ApiController {
         }};
     }
 
+    @CrossOrigin
     @GetMapping(value = "/orders",produces = "application/json")
     public List<Order> getOrders(){
         return orderService.getAll();
     }
 
+    @CrossOrigin
     @GetMapping(value = "/orders/{username}",produces = "application/json")
     public List<Order> getOrdersByUsername(@PathVariable("username") String username){
         return orderService.getOrdersByUsername(username);
