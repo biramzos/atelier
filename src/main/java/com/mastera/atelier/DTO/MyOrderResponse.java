@@ -1,5 +1,10 @@
 package com.mastera.atelier.DTO;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class MyOrderResponse {
     private Long id;
     private String name;
