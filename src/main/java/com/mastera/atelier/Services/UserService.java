@@ -55,4 +55,12 @@ public class UserService {
         userRepository.delete(user);
         return user;
     }
+
+    public String getFullname(String username){
+        if(username == "None"){
+            return "Никто";
+        }
+        User user = userRepository.findUserByUsername(username);
+        return user.getFirstname() + ' ' + user.getLastname();
+    }
 }

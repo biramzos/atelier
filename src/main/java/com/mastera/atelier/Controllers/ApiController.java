@@ -59,4 +59,10 @@ public class ApiController {
     public List<Order> getOrdersByUsername(@PathVariable("username") String username){
         return orderService.getOrdersByUsername(username);
     }
+
+    @CrossOrigin
+    @GetMapping(value = "/getfullname",produces = "application/json")
+    public String getFullname(@RequestParam("username") String username){
+        return userService.getFullname(username);
+    }
 }
