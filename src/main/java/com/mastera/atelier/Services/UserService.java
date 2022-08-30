@@ -57,7 +57,7 @@ public class UserService {
     }
 
     public String getFullname(String username){
-        if(username == "None"){
+        if(username.equals("None")){
             return "Никто";
         }
         User user = userRepository.findUserByUsername(username);
