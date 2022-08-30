@@ -1,5 +1,6 @@
 package com.mastera.atelier.Services;
 
+import com.mastera.atelier.DTO.OrderResponse;
 import com.mastera.atelier.Models.Order;
 import com.mastera.atelier.Repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,4 @@ public class OrderService {
         order.setUsername(username);
         orderRepository.save(order);
     }
-
 }

@@ -1,6 +1,9 @@
 package com.mastera.atelier.Controllers;
 
+import com.mastera.atelier.DTO.MyOrderResponse;
+import com.mastera.atelier.DTO.OrderResponse;
 import com.mastera.atelier.DTO.UserRequest;
+import com.mastera.atelier.DTO.UserResponse;
 import com.mastera.atelier.Models.Order;
 import com.mastera.atelier.Models.User;
 import com.mastera.atelier.Services.OrderService;
@@ -8,6 +11,8 @@ import com.mastera.atelier.Services.UserService;
 import com.mastera.atelier.Token.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,14 +55,23 @@ public class ApiController {
 
     @CrossOrigin
     @GetMapping(value = "/orders",produces = "application/json")
-    public List<Order> getOrders(){
-        return orderService.getAll();
+    public List<OrderResponse> getOrders(){
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        for(Order order:orderService.getAll()){
+            UserResponse user = new UserResponse(order.getUsername(), userService.getFullname(order.getUsername()));
+            orderResponses.add(new OrderResponse(order.getId(),order.getName(),order.getPhone(),user));
+        }
+        return orderResponses;
     }
 
     @CrossOrigin
     @GetMapping(value = "/orders/{username}",produces = "application/json")
-    public List<Order> getOrdersByUsername(@PathVariable("username") String username){
-        return orderService.getOrdersByUsername(username);
+    public List<MyOrderResponse> getOrdersByUsername(@PathVariable("username") String username){
+        List<MyOrderResponse> myOrderResponses = new ArrayList<>();
+        for(Order order:orderService.getOrdersByUsername(username)){
+            myOrderResponses.add(new MyOrderResponse(order.getId(),order.getName(), order.getPhone(), userService.getFullname(username)));
+        }
+        return myOrderResponses;
     }
 
     @CrossOrigin
