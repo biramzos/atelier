@@ -1,9 +1,6 @@
 package com.mastera.atelier.Controllers;
 
-import com.mastera.atelier.DTO.MyOrderResponse;
-import com.mastera.atelier.DTO.OrderResponse;
-import com.mastera.atelier.DTO.UserRequest;
-import com.mastera.atelier.DTO.UserResponse;
+import com.mastera.atelier.DTO.*;
 import com.mastera.atelier.Models.Order;
 import com.mastera.atelier.Models.User;
 import com.mastera.atelier.Services.OrderService;
@@ -75,8 +72,16 @@ public class ApiController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "/getfullname",produces = "application/json")
-    public String getFullname(@RequestParam("username") String username){
-        return userService.getFullname(username);
+    @PostMapping(value = "/update",produces = "application/json")
+    public String UpdatePost(@RequestBody UpdateRequest updateRequest){
+        User user = userService.getUserByUsername(updateRequest.getUsername());
+        if(user != null){
+            if(user.getPassword().equals(updateRequest.getOldPassword())){
+                userService.update(user,updateRequest.getNewPassword());
+                return "success";
+            }
+            return "password";
+        }
+        return "user";
     }
 }
