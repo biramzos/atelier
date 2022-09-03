@@ -56,7 +56,7 @@ public class ApiController {
         List<OrderResponse> orderResponses = new ArrayList<>();
         for(Order order:orderService.getAll()){
             UserResponse user = new UserResponse(order.getUsername(), userService.getFullname(order.getUsername()));
-            orderResponses.add(new OrderResponse(order.getId(),order.getName(),order.getPhone(),user));
+            orderResponses.add(new OrderResponse(order.getId(),order.getName(),order.getPhone(), order.getDate(),user));
         }
         return orderResponses;
     }
@@ -66,7 +66,7 @@ public class ApiController {
     public List<MyOrderResponse> getOrdersByUsername(@PathVariable("username") String username){
         List<MyOrderResponse> myOrderResponses = new ArrayList<>();
         for(Order order:orderService.getOrdersByUsername(username)){
-            myOrderResponses.add(new MyOrderResponse(order.getId(),order.getName(), order.getPhone(), userService.getFullname(username)));
+            myOrderResponses.add(new MyOrderResponse(order.getId(),order.getName(), order.getPhone(), order.getDate(), userService.getFullname(username)));
         }
         return myOrderResponses;
     }
