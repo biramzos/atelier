@@ -84,4 +84,25 @@ public class ApiController {
         }
         return "user";
     }
+
+    @CrossOrigin
+    @PostMapping(value = "/add/{id}",produces = "application/json")
+    public String addOrder(@PathVariable("id") Long id, @RequestParam("username") String username){
+        orderService.changeUsername(id, username);
+        return "success";
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/delete/{id}",produces = "application/json")
+    public String deleteOrder(@PathVariable("id") Long id){
+        orderService.changeUsername(id, "None");
+        return "success";
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/finish/{id}", produces = "application/json")
+    public String finishOrder(@PathVariable("id") Long id){
+        orderService.delete(id);
+        return "success";
+    }
 }

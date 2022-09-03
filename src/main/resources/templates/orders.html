@@ -28,6 +28,9 @@
                         Номер телефона &ensp;
                     </td>
                     <td>
+                        Дата &ensp;
+                    </td>
+                    <td>
                         Для &ensp;
                     </td>
                     <td th:if="${user.getRole()} == 'ADMIN'">
@@ -43,6 +46,9 @@
                     </td>
                     <td>
                         [(${order.getPhone()})] &ensp;
+                    </td>
+                    <td>
+                        [(${order.getDate()})]
                     </td>
                     <td>
                         <p th:if="${service.getUserByUsername(order.getUsername())} != null" th:text="${service.getUserByUsername(order.getUsername()).getFirstname()} + ' ' + ${service.getUserByUsername(order.getUsername()).getLastname()}"></p>

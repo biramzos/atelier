@@ -6,6 +6,9 @@ import com.mastera.atelier.Repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -19,7 +22,9 @@ public class OrderService {
             return false;
         }
         else {
-            Order order = new Order(name, phone, "None");
+            LocalDateTime date = LocalDateTime.now(ZoneId.of("UTC+06:00"));
+            String currentDate = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+            Order order = new Order(name, phone, "None", currentDate);
             orderRepository.save(order);
             return true;
         }
@@ -36,6 +41,10 @@ public class OrderService {
     public void delete(Long id){
         Order order = orderRepository.findOrderById(id);
         orderRepository.delete(order);
+    }
+
+    public Order getOrderById(Long id){
+        return orderRepository.findOrderById(id);
     }
 
     public void changeUsername(Long id, String username){

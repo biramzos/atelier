@@ -3,6 +3,7 @@ package com.mastera.atelier.Services;
 import com.mastera.atelier.Models.Role;
 import com.mastera.atelier.Models.User;
 import com.mastera.atelier.Repositories.UserRepository;
+import com.mastera.atelier.Token.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

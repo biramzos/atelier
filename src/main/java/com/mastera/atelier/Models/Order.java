@@ -20,12 +20,15 @@ public class Order {
     private String phone;
     @Column
     private String username;
+    @Column
+    private String date;
 
     public Order(){}
 
-    public Order(String name,String phone, String username){
+    public Order(String name,String phone, String username, String date){
         this.name = name;
         this.phone = phone;
         this.username = username;
+        this.date = date;
     }
 }
