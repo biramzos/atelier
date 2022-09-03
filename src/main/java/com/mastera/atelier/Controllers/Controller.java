@@ -32,13 +32,14 @@ public class Controller {
         if(req.getCookies() == null){
             Cookie cookie = new Cookie("SESSION","");
             res.addCookie(cookie);
+            return "redirect:/home";
         }
-        return "redirect:/home";
+        return "redirect:/";
     }
 
     @GetMapping("/home")
     public String home(HttpServletResponse res, HttpServletRequest req, Model model){
-        User currentUser = userService.getUserByUsername(getCurrentUser(req));
+        User currentUser = userService.getUserByUsername(getCurrentUser(res,req));
         if(currentUser != null){
             model.addAttribute("user", currentUser);
             model.addAttribute("masters", userService.getMasterUsers());
@@ -70,8 +71,8 @@ public class Controller {
     }
 
     @GetMapping("/profile")
-    public String profile(Model model, HttpServletRequest req){
-        User currentUser = userService.getUserByUsername(getCurrentUser(req));
+    public String profile(Model model, HttpServletRequest req, HttpServletResponse res){
+        User currentUser = userService.getUserByUsername(getCurrentUser(res,req));
         if(currentUser != null){
             model.addAttribute("user", currentUser);
         }
@@ -117,10 +118,16 @@ public class Controller {
         }
     }
 
-    public String getCurrentUser(HttpServletRequest req){
+    public String getCurrentUser(HttpServletResponse res,HttpServletRequest req){
         Cookie[] cookies = req.getCookies();
-        Token currentUserToken = new Token();
         String currentUser = "";
+        Token currentUserToken;
+        if (cookies == null) {
+            res.addCookie(new Cookie("SESSION", ""));
+            currentUserToken = new Token();
+        } else {
+            currentUserToken = new Token();
+        }
         for(Cookie cookie:cookies){
             if(cookie.getName().equals("SESSION")) {
                 if (!cookie.getValue().isEmpty()) {
@@ -132,8 +139,8 @@ public class Controller {
     }
 
     @GetMapping("/add/employee")
-    public String addEmployee_get(Model model,HttpServletRequest req){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String addEmployee_get(Model model,HttpServletRequest req, HttpServletResponse res){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         model.addAttribute("user", user);
         return "newemployee";
     }
@@ -163,8 +170,8 @@ public class Controller {
     }
 
     @GetMapping("/orders")
-    public String orders(Model model, HttpServletRequest req){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String orders(Model model, HttpServletRequest req, HttpServletResponse res){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         model.addAttribute("user", user);
         model.addAttribute("orders",orderService.getAll());
         model.addAttribute("masters",userService.getAll());
@@ -173,24 +180,24 @@ public class Controller {
     }
 
     @GetMapping("/orders/my")
-    public String myOrders(Model model, HttpServletRequest req){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String myOrders(Model model, HttpServletRequest req, HttpServletResponse res){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         model.addAttribute("user", user);
         model.addAttribute("orders",orderService.getOrdersByUsername(user.getUsername()));
         return "myOrders";
     }
 
     @PostMapping("/orders/my/{id}/delete")
-    public String deleteOrderFromMy(HttpServletRequest req, RedirectAttributes redir,@PathVariable("id") Long id){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String deleteOrderFromMy(HttpServletRequest req,HttpServletResponse res, RedirectAttributes redir,@PathVariable("id") Long id){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         orderService.changeUsername(id, "None");
         redir.addFlashAttribute("success", "Успешно удалено из ваших заказов!");
         return "redirect:/orders/my";
     }
 
     @GetMapping("/orders/{username}")
-    public String usernameOrders(HttpServletRequest req, Model model, @PathVariable("username") String username){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String usernameOrders(HttpServletRequest req, Model model, HttpServletResponse res, @PathVariable("username") String username){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         model.addAttribute("user", user);
         model.addAttribute("master", userService.getUserByUsername(username));
         model.addAttribute("orders", orderService.getOrdersByUsername(username));
@@ -235,8 +242,8 @@ public class Controller {
     }
 
     @PostMapping("/orders/{id}/forme")
-    public String addOrderForMe(HttpServletRequest req, RedirectAttributes redir,@PathVariable("id") Long id){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String addOrderForMe(HttpServletRequest req, HttpServletResponse res, RedirectAttributes redir,@PathVariable("id") Long id){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         orderService.changeUsername(id, user.getUsername());
         redir.addFlashAttribute("success", "Успешно добавлено в ваши заказы!");
         return "redirect:/orders";
@@ -250,8 +257,8 @@ public class Controller {
     }
 
     @GetMapping("/employees")
-    public String employees(Model model, HttpServletRequest req){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String employees(Model model, HttpServletRequest req, HttpServletResponse res){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         model.addAttribute("user", user);
         model.addAttribute("employees", userService.getAll());
         return "employees";
@@ -259,7 +266,7 @@ public class Controller {
 
     @GetMapping("/images/profile")
     public void image(HttpServletResponse res, HttpServletRequest req) throws IOException {
-        User user = userService.getUserByUsername(getCurrentUser(req));
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         res.setContentType("image/*");
         res.getOutputStream().write(user.getImage());
         res.getOutputStream().close();
@@ -284,8 +291,8 @@ public class Controller {
     }
 
     @PostMapping("/profile/update")
-    public String update(RedirectAttributes redir, HttpServletRequest req, @RequestParam("oldpass") String oldpass, @RequestParam("newpass") String newpass){
-        User user = userService.getUserByUsername(getCurrentUser(req));
+    public String update(RedirectAttributes redir, HttpServletResponse res, HttpServletRequest req, @RequestParam("oldpass") String oldpass, @RequestParam("newpass") String newpass){
+        User user = userService.getUserByUsername(getCurrentUser(res,req));
         if(user.getPassword().equals(oldpass)){
             userService.update(user, newpass);
             redir.addFlashAttribute("success", "Ваш пароль обновлен!");
